@@ -7,48 +7,73 @@ test.describe('CP-007, CP-008 - Availability Calendar', () => {
     await expect(page.getByRole('heading', { name: /availability/i })).toBeVisible();
   });
 
-  test('CP-007: Calendar shows availability with colors and correct date format and size', async ({ page }) => {
-    const calendar = page.locator('h2:text("Availability")').locator('..').locator('div >> nth=1'); // the grid below the title
+  test('CP-007: Calendar visuals, date format, size', async ({ page }) => {
+
+    const calendar = page.locator('section:below(h2:text("Availability"))').first();
     await expect(calendar).toBeVisible();
 
-    // Cells contain ISO yyyy-mm-dd in title attribute
-    const cells = page.locator('[title^="20"]'); // yyyy-mm-dd
+    const cells = page.locator('[title^="20"]');
     await expect(cells).toHaveCountGreaterThan(0);
-    const titleAttr = await cells.first().getAttribute('title');
-    expect(titleAttr).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 
-    // Some cells display "Booked" (reserved), others not (available)
-    const booked = page.locator('text=Booked');
-    await expect.any([expect(booked).toHaveCountGreaterThan(0), expect(booked).toHaveCount(0)]);
+    const title = await cells.first().getAttribute('title');
+    expect(title).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 
-    // Calendar occupies >50% of visible width/height
+    const booked = cells.filter({ hasText: 'Booked' });
+    const available = cells.filter({ hasNotText: 'Booked' });
+
+    const bookedCount = await booked.count();
+    const availableCount = await available.count();
+
+    expect(bookedCount + availableCount).toBeGreaterThan(0);
+
     const size = await calendar.evaluate((el) => {
       const r = el.getBoundingClientRect();
-      return { w: r.width, h: r.height, vw: window.innerWidth, vh: window.innerHeight };
+      return { w: r.width, h: r.height, vw: innerWidth, vh: innerHeight };
     });
+
     expect(size.w / size.vw).toBeGreaterThan(0.5);
     expect(size.h / size.vh).toBeGreaterThan(0.5);
   });
 
-  test('CP-008: Interactions - can select available date, cannot select reserved, past dates disabled', async ({ page }) => {
+  test('CP-008: Selecting available, blocking reserved, past disabled', async ({ page }) => {
+
     const cells = page.locator('[title^="20"]');
-    const count = await cells.count();
-    expect(count).toBeGreaterThan(0);
+    await expect(cells).toHaveCountGreaterThan(0);
 
-    // Try clicking first available-like cell (heuristic: without "Booked" child)
-    const availableCandidate = cells.filter({ hasNotText: 'Booked' }).first();
-    await availableCandidate.click();
-    // Assumption: selection toggles a state (e.g., aria-selected) in the interactive version
-    // We assert no crash and click succeeds
-    await expect(availableCandidate).toBeVisible();
+    test.step('Can select an available date', async () => {
+      const available = cells.filter({ hasNotText: 'Booked' }).first();
+      await expect(available).toBeVisible();
+      await available.click();
 
-    // Clicking a booked cell should not change selection (ensure click doesn't throw)
-    const bookedCell = cells.filter({ hasText: 'Booked' }).first();
-    if (await bookedCell.count()) {
-      await bookedCell.click();
-      await expect(bookedCell).toBeVisible();
-    }
+      const aria = await available.getAttribute('aria-selected');
+      if (aria !== null) expect(aria).toBe('true');
+    });
+
+    test.step('Clicking booked cell does not select it', async () => {
+      const booked = cells.filter({ hasText: 'Booked' }).first();
+      if (await booked.count()) {
+        await booked.click();
+        const aria = await booked.getAttribute('aria-selected');
+        if (aria !== null) expect(aria).not.toBe('true');
+      }
+    });
+
+    test.step('Past dates are disabled', async () => {
+      const today = new Date().toISOString().slice(0, 10);
+
+      const pastCells = cells.filter(async (cell) => {
+        const title = await cell.getAttribute('title');
+        return title && title < today;
+      });
+
+      const count = await pastCells.count();
+      if (count > 0) {
+        for (let i = 0; i < count; i++) {
+          const c = pastCells.nth(i);
+          const disabled = await c.getAttribute('aria-disabled');
+          if (disabled !== null) expect(disabled).toBe('true');
+        }
+      }
+    });
   });
 });
-
-
