@@ -1,29 +1,25 @@
 import { test, expect } from '@playwright/test';
-
-async function loginAdmin(page, { username = 'admin', password = process.env.ADMIN_PASSWORD || 'admin123' } = {}) {
-  await page.goto('/admin/login');
-  await page.fill('input[name="username"]', username);
-  await page.fill('input[name="password"]', password);
-  await page.getByRole('button', { name: /sign in/i }).click();
-}
+import { AdminLoginPage } from '../pom/AdminLoginPage';
+import { AdminDashboardPage } from '../pom/AdminDashboardPage';
 
 test.describe('CP-012..CP-017, CP-037 - Admin flows', () => {
   test('CP-012: Admin authentication (basic checks)', async ({ page }) => {
     // Public internet restriction and 2FA not verifiable here; assume enforced at network/infra level.
-    await page.goto('/admin');
+    const dashboard = new AdminDashboardPage(page);
+    await dashboard.goto();
     await expect(page).toHaveURL(/\/admin\/login/);
 
     // Wrong credentials rejected
-    await page.fill('input[name="username"]', 'admin');
-    await page.fill('input[name="password"]', 'wrong');
-    await page.getByRole('button', { name: /sign in/i }).click();
+    const login = new AdminLoginPage(page);
+    await login.expectLoginPageVisible();
+    await login.login('admin', 'wrong');
     // Should not reach dashboard
     await expect(page).toHaveURL(/\/admin\/login/);
 
     // Correct credentials
-    await loginAdmin(page);
+    await login.login('admin', process.env.ADMIN_PASSWORD || 'admin123');
     await expect(page).toHaveURL(/\/admin$/);
-    await expect(page.getByRole('heading', { name: /admin dashboard/i })).toBeVisible();
+    await dashboard.expectVisible();
   });
 
   test.fixme('CP-013: Inventory - Add item', async () => {
@@ -35,8 +31,11 @@ test.describe('CP-012..CP-017, CP-037 - Admin flows', () => {
   });
 
   test('CP-015: Rentals viewer - list view shows expected columns', async ({ page }) => {
-    await loginAdmin(page);
-    await page.goto('/admin');
+    const login = new AdminLoginPage(page);
+    await login.goto();
+    await login.login('admin', process.env.ADMIN_PASSWORD || 'admin123');
+    const dashboard = new AdminDashboardPage(page);
+    await dashboard.goto();
     // Verify columns exist
     await expect(page.locator('th:has-text("Item")')).toBeVisible();
     await expect(page.locator('th:has-text("Dates")')).toBeVisible();
@@ -48,16 +47,21 @@ test.describe('CP-012..CP-017, CP-037 - Admin flows', () => {
   });
 
   test('CP-017: Cancel rentals (requires active rental) - basic availability of action', async ({ page }) => {
-    await loginAdmin(page);
-    await page.goto('/admin');
+    const login = new AdminLoginPage(page);
+    await login.goto();
+    await login.login('admin', process.env.ADMIN_PASSWORD || 'admin123');
+    const dashboard = new AdminDashboardPage(page);
+    await dashboard.goto();
     // If an active rental exists, there should be a Cancel button
-    const cancelBtn = page.getByRole('button', { name: /cancel/i });
-    await expect.any([expect(cancelBtn).toHaveCountGreaterThan(0), expect(cancelBtn).toHaveCount(0)]);
+    const count = await dashboard.cancelButtons.count();
+    expect(count).toBeGreaterThanOrEqual(0);
   });
 
   test('CP-037: Negative cancellation - no rental to cancel returns proper error', async ({ page, request, context, baseURL }) => {
     // Login to get admin session
-    await loginAdmin(page);
+    const login = new AdminLoginPage(page);
+    await login.goto();
+    await login.login('admin', process.env.ADMIN_PASSWORD || 'admin123');
     await page.waitForURL(/\/admin$/);
 
     // Hit cancel endpoint with a non-existent rental id

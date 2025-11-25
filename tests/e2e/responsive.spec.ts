@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import { HomePage } from '../pom/HomePage';
+import { SearchPage } from '../pom/SearchPage';
 
 async function assertNoHorizontalScroll(page) {
   const hasOverflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
@@ -15,8 +17,9 @@ test.describe('CP-026 - Desktop responsiveness', () => {
   for (const vp of sizes) {
     test(`Desktop layout ok at ${vp.width}x${vp.height}`, async ({ page }) => {
       await page.setViewportSize(vp);
-      await page.goto('/');
-      await expect(page.getByRole('link', { name: /browse/i })).toBeVisible();
+      const home = new HomePage(page);
+      await home.goto();
+      await expect(home.browseLink).toBeVisible();
       await assertNoHorizontalScroll(page);
     });
   }
@@ -31,12 +34,14 @@ test.describe('CP-027 - Mobile responsiveness', () => {
   for (const vp of mobile) {
     test(`Mobile layout ok at ${vp.label} ${vp.width}x${vp.height}`, async ({ page }) => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
-      await page.goto('/');
+      const home = new HomePage(page);
+      await home.goto();
       await assertNoHorizontalScroll(page);
 
       // Main content accessible and images visible
-      await page.getByRole('link', { name: /browse/i }).click();
-      await expect(page.getByRole('heading', { name: /browse catalog/i })).toBeVisible();
+      await home.browseLink.click();
+      const search = new SearchPage(page);
+      await expect(search.heading).toBeVisible();
     });
   }
 });

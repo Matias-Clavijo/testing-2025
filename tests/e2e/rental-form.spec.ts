@@ -1,10 +1,6 @@
 import { test, expect } from '@playwright/test';
-
-async function openFirstItemDetail(page) {
-  await page.goto('/');
-  await page.getByRole('link', { name: /view details/i }).first().click();
-  await expect(page.getByRole('heading', { name: /schedule a rental/i })).toBeVisible();
-}
+import { HomePage } from '../pom/HomePage';
+import { ItemPage } from '../pom/ItemPage';
 
 function toISO(date: Date) {
   return date.toISOString().slice(0, 10);
@@ -18,9 +14,11 @@ function futureDate(days: number) {
 
 test.describe('CP-009, CP-010, CP-011, CP-036 - Rental form validation', () => {
   test('CP-009: Required fields validation and progressive completion', async ({ page }) => {
-    await openFirstItemDetail(page);
-
-    const submit = page.getByRole('button', { name: /request rental/i });
+    const home = new HomePage(page);
+    await home.openFirstFeaturedDetail();
+    const item = new ItemPage(page);
+    await item.expectOnPage();
+    const submit = item.requestButton;
 
     await test.step('Empty submit rejected', async () => {
       await submit.click();
@@ -28,95 +26,94 @@ test.describe('CP-009, CP-010, CP-011, CP-036 - Rental form validation', () => {
     });
 
     await test.step('Fill name only', async () => {
-      await page.fill('#name', 'John Doe');
+      await item.nameInput.fill('John Doe');
       await submit.click();
       await expect(submit).toBeEnabled();
     });
 
     await test.step('Fill email', async () => {
-      await page.fill('#email', 'john@example.com');
+      await item.emailInput.fill('john@example.com');
       await submit.click();
       await expect(submit).toBeEnabled();
     });
 
     await test.step('Fill phone', async () => {
-      await page.fill('#phone', '+598 91234567');
+      await item.phoneInput.fill('+598 91234567');
       await submit.click();
       await expect(submit).toBeEnabled();
     });
 
     await test.step('Fill valid dates', async () => {
-      await page.fill('#start', futureDate(10));
-      await page.fill('#end', futureDate(12));
+      await item.startInput.fill(futureDate(10));
+      await item.endInput.fill(futureDate(12));
       await expect(submit).toBeEnabled();
     });
   });
 
   test('CP-010: Phone format validation', async ({ page }) => {
-    await openFirstItemDetail(page);
+    const home = new HomePage(page);
+    await home.openFirstFeaturedDetail();
+    const item = new ItemPage(page);
+    await item.nameInput.fill('Jane');
+    await item.emailInput.fill('jane@example.com');
+    await item.startInput.fill('2025-10-15');
+    await item.endInput.fill('2025-10-18');
 
-    await page.fill('#name', 'Jane');
-    await page.fill('#email', 'jane@example.com');
-    await page.fill('#start', '2025-10-15');
-    await page.fill('#end', '2025-10-18');
-
-    const submit = page.getByRole('button', { name: /request rental/i });
+    const submit = item.requestButton;
     const invalidPhones = ['091234567', '123456789', '59891234567'];
 
     for (const value of invalidPhones) {
-      await page.fill('#phone', value);
+      await item.phoneInput.fill(value);
       await submit.click();
       await expect(submit).toBeEnabled();
     }
 
-    await page.fill('#phone', '+598 91234567');
+    await item.phoneInput.fill('+598 91234567');
     await expect(submit).toBeEnabled();
   });
 
   test('CP-011: Date validation rules', async ({ page }) => {
-    await openFirstItemDetail(page);
+    const home = new HomePage(page);
+    await home.openFirstFeaturedDetail();
+    const item = new ItemPage(page);
+    await item.nameInput.fill('Alice');
+    await item.emailInput.fill('alice@example.com');
+    await item.phoneInput.fill('+598 91234567');
 
-    await page.fill('#name', 'Alice');
-    await page.fill('#email', 'alice@example.com');
-    await page.fill('#phone', '+598 91234567');
-
-    const submit = page.getByRole('button', { name: /request rental/i });
+    const submit = item.requestButton;
 
     await test.step('End date before start date', async () => {
-      await page.fill('#start', '2025-10-15');
-      await page.fill('#end', '2025-10-10');
+      await item.startInput.fill('2025-10-15');
+      await item.endInput.fill('2025-10-10');
       await submit.click();
       await expect(submit).toBeEnabled();
     });
 
     await test.step('Incorrect date format rejected', async () => {
-      await page.fill('#start', '15/10/2025');
-      await page.fill('#end', '18/10/2025');
+      await item.startInput.fill('15/10/2025');
+      await item.endInput.fill('18/10/2025');
       await submit.click();
       await expect(submit).toBeEnabled();
     });
 
     await test.step('Valid ISO date format accepted', async () => {
-      await page.fill('#start', '2025-10-15');
-      await page.fill('#end', '2025-10-18');
+      await item.startInput.fill('2025-10-15');
+      await item.endInput.fill('2025-10-18');
       await expect(submit).toBeEnabled();
     });
   });
 
   test('CP-036: Invalid phone value prevents reservation', async ({ page }) => {
-    await page.goto('/');
-    await page.getByRole('link', { name: /featured/i }).scrollIntoViewIfNeeded();
-    await page.getByRole('link', { name: /view details/i }).first().click();
-    await expect(page.getByRole('heading', { name: /schedule a rental/i })).toBeVisible();
+    const home = new HomePage(page);
+    await home.openFirstFeaturedDetail();
+    const item = new ItemPage(page);
+    await item.nameInput.fill('Sebastian');
+    await item.emailInput.fill('seba@gmail.com');
+    await item.phoneInput.fill('TestTest');
+    await item.startInput.fill(futureDate(5));
+    await item.endInput.fill(futureDate(7));
 
-    await page.fill('#name', 'Sebastian');
-    await page.fill('#email', 'seba@gmail.com');
-    await page.fill('#phone', 'TestTest');
-
-    await page.fill('#start', futureDate(5));
-    await page.fill('#end', futureDate(7));
-
-    const submit = page.getByRole('button', { name: /request rental/i });
+    const submit = item.requestButton;
     await submit.click();
 
     await expect(submit).toBeEnabled();

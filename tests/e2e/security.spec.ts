@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { AdminLoginPage } from '../pom/AdminLoginPage';
 
 test.describe('CP-022 - SQL Injection protection', () => {
   test('Search input sanitizes payloads', async ({ page }) => {
@@ -17,10 +18,9 @@ test.describe('CP-022 - SQL Injection protection', () => {
   });
 
   test('Contact/admin fields reject injection attempts', async ({ page }) => {
-    await page.goto('/admin/login');
-    await page.fill('input[name="username"]', `admin' OR '1'='1' --`);
-    await page.fill('input[name="password"]', `anything`);
-    await page.getByRole('button', { name: /sign in/i }).click();
+    const login = new AdminLoginPage(page);
+    await login.goto();
+    await login.login(`admin' OR '1'='1' --`, 'anything');
     await expect(page).toHaveURL(/\/admin\/login/);
   });
 });
