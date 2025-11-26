@@ -8,7 +8,7 @@ export class HomePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.browseLink = page.getByRole('link', { name: /browse/i });
+    this.browseLink = page.getByRole('link', { name: /browse/i }).first();
     this.faqLink = page.getByRole('link', { name: /faq/i });
     this.firstFeaturedViewDetails = page.getByRole('link', { name: /view details/i }).first();
   }

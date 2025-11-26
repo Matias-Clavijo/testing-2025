@@ -38,10 +38,13 @@ test.describe('CP-027 - Mobile responsiveness', () => {
       await home.goto();
       await assertNoHorizontalScroll(page);
 
-      // Main content accessible and images visible
-      await home.browseLink.click();
+      await home.browseLink.waitFor({ state: 'visible' });
+      await Promise.all([
+        page.waitForURL(/\/search/),
+        home.browseLink.click(),
+      ]);
       const search = new SearchPage(page);
-      await expect(search.heading).toBeVisible();
+      await search.expectBrowseVisible();
     });
   }
 });
