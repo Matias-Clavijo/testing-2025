@@ -7,7 +7,6 @@ test.describe('CP-018 - FAQ page', () => {
     await faq.openFromMainNav();
     await faq.expectOnFaq();
 
-    // Verify key topics
     await faq.expectTopicsVisible([
       /pagos/i,
       /duración de alquiler/i,
