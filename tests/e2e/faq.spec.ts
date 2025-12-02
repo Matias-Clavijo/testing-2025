@@ -8,12 +8,12 @@ test.describe('CP-018 - FAQ page', () => {
     await faq.expectOnFaq();
 
     await faq.expectTopicsVisible([
-      /pagos/i,
-      /duración de alquiler/i,
-      /extensiones/i,
-      /tallas/i,
-      /¿cómo funciona el alquiler\?/i,
-      /¿incluye limpieza\?/i,
+      /¿qué métodos de pago aceptan\?/i,
+      /¿qué tallas están disponibles\?/i,
+      /¿puedo cancelar mi reserva\?/i,
+      /¿qué pasa si devuelvo el vestido más tarde/i,
+      /¿qué ocurre si el vestido se daña durante el uso\?/i,
+      /¿puedo probarme el vestido antes de alquilarlo\?/i,
     ]);
   });
 });

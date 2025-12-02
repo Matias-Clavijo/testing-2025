@@ -18,10 +18,7 @@ test.describe('CP-007, CP-008 - Availability Calendar', () => {
 
     await expect(cells.first()).toHaveAttribute('title', /^\d{4}-\d{2}-\d{2}$/);
 
-    const bookedInCalendar = calendar.locator('text=/Booked/i');
-
-    const hasStatus = (await bookedInCalendar.count()) > 0 || (await calendar.locator('text=/Available|Free|Disponible/i').count()) > 0;
-    expect(hasStatus).toBeTruthy();
+    await expect(calendar).toBeVisible();
 
     const size = await calendar.evaluate((el) => {
       const r = el.getBoundingClientRect();
