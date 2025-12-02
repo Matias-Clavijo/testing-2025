@@ -1,6 +1,7 @@
 import { isAdmin, getOrCreateCsrfToken } from "@/lib/CsrfSessionManagement";
 import { listItems, listRentals } from "@/lib/RentalManagementSystem";
 import { redirect } from "next/navigation";
+import Link from 'next/link';
 
 type AdminItem = {
   id: number | string;
@@ -21,9 +22,12 @@ export default async function Page() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Admin dashboard</h1>
-        <form action="/api/admin/logout" method="POST">
-          <button className="text-sm rounded-lg border px-3 py-2">Sign out</button>
-        </form>
+        <div className="flex items-center gap-3">
+          <Link href="/admin/rentals" className="text-sm rounded-lg border px-3 py-2 hover:bg-slate-50">Rent Management</Link>
+          <form action="/api/admin/logout" method="POST">
+            <button className="text-sm rounded-lg border px-3 py-2">Sign out</button>
+          </form>
+        </div>
       </div>
 
       <section className="mt-8">
