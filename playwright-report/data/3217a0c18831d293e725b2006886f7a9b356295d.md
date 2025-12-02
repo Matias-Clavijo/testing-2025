@@ -1,0 +1,119 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "GlamRent" [ref=e5] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e6]:
+          - link "Admin" [ref=e7] [cursor=pointer]:
+            - /url: /admin/login
+          - link "Become a lender" [ref=e8] [cursor=pointer]:
+            - /url: /become-a-lender
+    - main [ref=e9]:
+      - generic [ref=e12]:
+        - heading "Rent designer dresses for everyoccasion." [level=1] [ref=e13]
+        - paragraph [ref=e14]: Look stunning without the price tag. Flexible rentals, free cleaning, and fast delivery.
+        - generic [ref=e15]:
+          - generic [ref=e16]:
+            - generic [ref=e17]: Search
+            - textbox "Search" [ref=e18]:
+              - /placeholder: Search by style, color, or designer
+          - generic [ref=e19]:
+            - generic [ref=e20]: Start date
+            - textbox "Start date" [ref=e21]
+          - generic [ref=e22]:
+            - generic [ref=e23]: End date
+            - textbox "End date" [ref=e24]
+          - generic [ref=e25]:
+            - generic [ref=e26]: Size
+            - combobox "Size" [ref=e27]:
+              - option "Any size" [selected]
+              - option "XS"
+              - option "S"
+              - option "M"
+              - option "L"
+              - option "XL"
+          - button "Search dresses" [ref=e29]
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - heading "Featured picks" [level=2] [ref=e32]
+          - link "Browse all →" [ref=e33] [cursor=pointer]:
+            - /url: /search
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - generic [ref=e36]:
+              - img "Model wearing a champagne silk evening gown" [ref=e37]
+              - generic [ref=e39]: From $79/day
+            - generic [ref=e40]:
+              - paragraph [ref=e41]: Silk Evening Gown
+              - paragraph [ref=e42]: Free cleaning • 2–7 day rentals
+              - link "View details" [ref=e44] [cursor=pointer]:
+                - /url: /items/1
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - img "Elegant black tie dress" [ref=e47]
+              - generic [ref=e49]: From $99/day
+            - generic [ref=e50]:
+              - paragraph [ref=e51]: Black Tie Dress
+              - paragraph [ref=e52]: Free cleaning • 2–7 day rentals
+              - link "View details" [ref=e54] [cursor=pointer]:
+                - /url: /items/2
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - img "Floral midi dress perfect for daytime events" [ref=e57]
+              - generic [ref=e59]: From $49/day
+            - generic [ref=e60]:
+              - paragraph [ref=e61]: Floral Midi Dress
+              - paragraph [ref=e62]: Free cleaning • 2–7 day rentals
+              - link "View details" [ref=e64] [cursor=pointer]:
+                - /url: /items/3
+          - generic [ref=e65]:
+            - generic [ref=e66]:
+              - img "Velvet cocktail dress in deep tones" [ref=e67]
+              - generic [ref=e69]: From $59/day
+            - generic [ref=e70]:
+              - paragraph [ref=e71]: Velvet Cocktail Dress
+              - paragraph [ref=e72]: Free cleaning • 2–7 day rentals
+              - link "View details" [ref=e74] [cursor=pointer]:
+                - /url: /items/4
+      - generic [ref=e76]:
+        - heading "How it works" [level=2] [ref=e77]
+        - generic [ref=e78]:
+          - generic [ref=e79]:
+            - generic [ref=e80]: 🧭
+            - heading "Browse" [level=3] [ref=e81]
+            - paragraph [ref=e82]: Find styles by size, color, designer, or occasion.
+          - generic [ref=e83]:
+            - generic [ref=e84]: 📦
+            - heading "Rent" [level=3] [ref=e85]
+            - paragraph [ref=e86]: Pick dates and get it delivered to your door.
+          - generic [ref=e87]:
+            - generic [ref=e88]: ✨
+            - heading "Return" [level=3] [ref=e89]
+            - paragraph [ref=e90]: Wear, wow, and send it back—cleaning included.
+      - generic [ref=e92]:
+        - generic [ref=e93]:
+          - heading "Join our newsletter" [level=2] [ref=e94]
+          - paragraph [ref=e95]: Get style tips, drops, and exclusive offers.
+        - generic [ref=e96]:
+          - generic [ref=e97]: Email
+          - textbox "Email" [ref=e98]:
+            - /placeholder: you@example.com
+          - button "Subscribe" [ref=e99]
+    - contentinfo [ref=e100]:
+      - generic [ref=e101]:
+        - paragraph [ref=e102]: © 2025 GlamRent. All rights reserved.
+        - generic [ref=e103]:
+          - link "Terms" [ref=e104] [cursor=pointer]:
+            - /url: /terms
+          - link "Privacy" [ref=e105] [cursor=pointer]:
+            - /url: /privacy
+          - link "Contact" [ref=e106] [cursor=pointer]:
+            - /url: /contact
+  - button "Open Next.js Dev Tools" [ref=e112] [cursor=pointer]:
+    - img [ref=e113]
+  - alert [ref=e116]
+```

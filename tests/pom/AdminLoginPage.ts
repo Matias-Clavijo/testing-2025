@@ -9,8 +9,8 @@ export class AdminLoginPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.usernameInput = page.getByRole('textbox', { name: 'username' });
-    this.passwordInput = page.getByRole('textbox', { name: 'password' });
+    this.usernameInput = page.getByRole('textbox', { name: /username/i });
+    this.passwordInput = page.getByRole('textbox', { name: /password/i });
     this.signInButton = page.getByRole('button', { name: 'Sign in' });
     // Only check for presence of an H1 element (any text)
     this.adminSignInHeading = page.locator('h1');

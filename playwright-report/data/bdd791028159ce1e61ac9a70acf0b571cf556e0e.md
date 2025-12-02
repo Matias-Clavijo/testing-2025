@@ -1,0 +1,70 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+    - img [ref=e8]
+  - alert [ref=e11]
+  - generic [ref=e13]:
+    - img "Model wearing a champagne silk evening gown" [ref=e16]
+    - generic [ref=e17]:
+      - heading "Silk Evening Gown" [level=1] [ref=e18]
+      - paragraph [ref=e19]: dress
+      - paragraph [ref=e20]: Luxurious silk gown with flattering silhouette.
+      - paragraph [ref=e21]: From $79/day
+      - paragraph [ref=e22]: "Sizes: XS, S, M, L"
+      - paragraph [ref=e23]: "Color: champagne • Style: evening"
+      - generic [ref=e24]:
+        - heading "Availability" [level=2] [ref=e25]
+        - generic [ref=e26]:
+          - generic "2025-12-02" [ref=e27]: Dec 2
+          - generic "2025-12-03" [ref=e28]: Dec 3
+          - generic "2025-12-04" [ref=e29]: Dec 4
+          - generic "2025-12-05" [ref=e30]: Dec 5
+          - generic "2025-12-06" [ref=e31]: Dec 6
+          - generic "2025-12-07" [ref=e32]: Dec 7
+          - generic "2025-12-08" [ref=e33]: Dec 8
+          - generic "2025-12-09" [ref=e34]: Dec 9
+          - generic "2025-12-10" [ref=e35]: Dec 10
+          - generic "2025-12-11" [ref=e36]: Dec 11
+          - generic "2025-12-12" [ref=e37]: Dec 12
+          - generic "2025-12-13" [ref=e38]: Dec 13
+          - generic "2025-12-14" [ref=e39]: Dec 14
+          - generic "2025-12-15" [ref=e40]: Dec 15
+          - generic "2025-12-16" [ref=e41]: Dec 16
+          - generic "2025-12-17" [ref=e42]: Dec 17
+          - generic "2025-12-18" [ref=e43]: Dec 18
+          - generic "2025-12-19" [ref=e44]: Dec 19
+          - generic "2025-12-20" [ref=e45]: Dec 20
+          - generic "2025-12-21" [ref=e46]: Dec 21
+          - generic "2025-12-22" [ref=e47]: Dec 22
+          - generic "2025-12-23" [ref=e48]: Dec 23
+          - generic "2025-12-24" [ref=e49]: Dec 24
+          - generic "2025-12-25" [ref=e50]: Dec 25
+          - generic "2025-12-26" [ref=e51]: Dec 26
+          - generic "2025-12-27" [ref=e52]: Dec 27
+          - generic "2025-12-28" [ref=e53]: Dec 28
+          - generic "2025-12-29" [ref=e54]: Dec 29
+          - generic "2025-12-30" [ref=e55]: Dec 30
+          - generic "2025-12-31" [ref=e56]: Dec 31
+      - generic [ref=e57]:
+        - heading "Schedule a rental" [level=2] [ref=e58]
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - generic [ref=e61]: Full name
+            - textbox "Full name" [ref=e62]: Alice
+          - generic [ref=e63]:
+            - generic [ref=e64]: Email
+            - textbox "Email" [ref=e65]: alice@example.com
+          - generic [ref=e66]:
+            - generic [ref=e67]: Phone
+            - textbox "Phone" [ref=e68]: +598 91234567
+          - generic [ref=e69]:
+            - generic [ref=e70]: Start date
+            - textbox "Start date" [active] [ref=e71]
+          - generic [ref=e72]:
+            - generic [ref=e73]: End date
+            - textbox "End date" [ref=e74]: 2025-10-10
+          - button "Request rental" [ref=e76]
+        - paragraph [ref=e77]: No account required. We’ll confirm availability via email.
+```
