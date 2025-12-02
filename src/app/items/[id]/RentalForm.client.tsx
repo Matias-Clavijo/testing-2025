@@ -17,6 +17,8 @@ function toLocalISODate(date: Date): string {
 export default function RentalForm({ itemId, csrf }: Props) {
   const [todayISO, setTodayISO] = useState<string>("");
   const [startDate, setStartDate] = useState<string>("");
+  const [fullName, setFullName] = useState<string>("");
+  const [nameError, setNameError] = useState<string>("");
 
   useEffect(() => {
     setTodayISO(toLocalISODate(new Date()));
@@ -24,13 +26,63 @@ export default function RentalForm({ itemId, csrf }: Props) {
 
   const endMin = useMemo(() => (startDate || todayISO || undefined), [startDate, todayISO]);
 
+  function sanitizeToLetters(input: string): { value: string; hadInvalid: boolean } {
+    const sanitized = input.replace(/[^\p{L}\s]/gu, "");
+    return { value: sanitized, hadInvalid: sanitized.length !== input.length };
+  }
+
+  function isValidName(name: string): boolean {
+    return /^[\p{L}]+(?:\s+[\p{L}]+)*$/u.test(name.trim());
+  }
+
+  function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { value } = e.target;
+    const { value: sanitized, hadInvalid } = sanitizeToLetters(value);
+    setFullName(sanitized);
+    if (hadInvalid) {
+      setNameError("Only letters are allowed");
+    } else {
+      if (sanitized === "" || isValidName(sanitized)) {
+        setNameError("");
+      }
+    }
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    if (!isValidName(fullName)) {
+      e.preventDefault();
+      setNameError("Only letters are allowed");
+      const input = (e.currentTarget.elements.namedItem("name") as HTMLInputElement | null);
+      input?.focus();
+    }
+  }
+
   return (
-    <form action="/api/rentals" method="POST" className="grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-2xl border p-4">
+    <form action="/api/rentals" method="POST" onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-3 rounded-2xl border p-4">
       <input type="hidden" name="itemId" value={itemId} />
       <input type="hidden" name="csrf" value={csrf} />
+      {nameError && (
+        <div className="sm:col-span-2">
+          <div className="w-full rounded-xl border border-rose-200 bg-rose-100 px-4 py-3 text-sm text-rose-700" role="alert" aria-live="polite">
+            {nameError}
+          </div>
+        </div>
+      )}
       <div className="sm:col-span-2">
         <label className="sr-only" htmlFor="name">Full name</label>
-        <input id="name" name="name" required placeholder="Full name" className="w-full rounded-xl border px-4 py-3 text-sm" />
+        <input
+          id="name"
+          name="name"
+          required
+          placeholder="Full name"
+          className="w-full rounded-xl border px-4 py-3 text-sm"
+          value={fullName}
+          onChange={handleNameChange}
+          aria-invalid={Boolean(nameError) || undefined}
+          pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$"
+          title="Only letters are allowed"
+          autoComplete="name"
+        />
       </div>
       <div>
         <label className="sr-only" htmlFor="email">Email</label>
