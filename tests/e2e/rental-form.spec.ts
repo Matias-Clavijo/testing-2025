@@ -12,12 +12,17 @@ function futureDate(days: number) {
   return toISO(d);
 }
 
+async function openItem(page) {
+  const home = new HomePage(page);
+  await home.openFirstFeaturedDetail();
+  const item = new ItemPage(page);
+  await item.expectOnPage();
+  return item;
+}
+
 test.describe('CP-009, CP-010, CP-011, CP-036 - Rental form validation', () => {
   test('CP-009: Required fields validation and progressive completion', async ({ page }) => {
-    const home = new HomePage(page);
-    await home.openFirstFeaturedDetail();
-    const item = new ItemPage(page);
-    await item.expectOnPage();
+    const item = await openItem(page);
     const submit = item.requestButton;
 
     await test.step('Empty submit rejected', async () => {
@@ -51,9 +56,7 @@ test.describe('CP-009, CP-010, CP-011, CP-036 - Rental form validation', () => {
   });
 
   test('CP-010: Phone format validation', async ({ page }) => {
-    const home = new HomePage(page);
-    await home.openFirstFeaturedDetail();
-    const item = new ItemPage(page);
+    const item = await openItem(page);
     await item.nameInput.fill('Jane');
     await item.emailInput.fill('jane@example.com');
     await item.startInput.fill('2025-10-15');
@@ -73,13 +76,10 @@ test.describe('CP-009, CP-010, CP-011, CP-036 - Rental form validation', () => {
   });
 
   test('CP-011: Date validation rules', async ({ page }) => {
-    const home = new HomePage(page);
-    await home.openFirstFeaturedDetail();
-    const item = new ItemPage(page);
+    const item = await openItem(page);
     await item.nameInput.fill('Alice');
     await item.emailInput.fill('alice@example.com');
     await item.phoneInput.fill('+598 91234567');
-
     const submit = item.requestButton;
 
     await test.step('End date before start date', async () => {
@@ -104,9 +104,7 @@ test.describe('CP-009, CP-010, CP-011, CP-036 - Rental form validation', () => {
   });
 
   test('CP-036: Invalid phone value prevents reservation', async ({ page }) => {
-    const home = new HomePage(page);
-    await home.openFirstFeaturedDetail();
-    const item = new ItemPage(page);
+    const item = await openItem(page);
     await item.nameInput.fill('Sebastian');
     await item.emailInput.fill('seba@gmail.com');
     await item.phoneInput.fill('TestTest');
