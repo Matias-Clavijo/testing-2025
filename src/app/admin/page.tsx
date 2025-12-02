@@ -2,6 +2,7 @@ import { isAdmin, getOrCreateCsrfToken } from "@/lib/CsrfSessionManagement";
 import { listItems, listRentals } from "@/lib/RentalManagementSystem";
 import { redirect } from "next/navigation";
 import Link from 'next/link';
+import CancelRentalButton from "./components/CancelRentalButton.client";
 
 type AdminItem = {
   id: number | string;
@@ -16,7 +17,7 @@ export default async function Page() {
   const csrf = await getOrCreateCsrfToken();
 
   const items = listItems();
-  const rentals = listRentals();
+  const rentals = listRentals().filter((r) => r.status === "active");
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
@@ -87,20 +88,7 @@ export default async function Page() {
                   </td>
                   <td className="py-2 pr-4 capitalize">{r.status}</td>
                   <td className="py-2 pr-4">
-                    {r.status === "active" ? (
-                      <form
-                        onSubmit={async (e) => {
-                          // no-op on server; keep for semantics
-                        }}
-                        action={`/api/admin/rentals/${r.id}/cancel`}
-                        method="POST"
-                      >
-                        <input type="hidden" name="csrf" value={csrf} />
-                        <button className="rounded-lg border px-3 py-1 hover:bg-slate-50 dark:hover:bg-slate-800">Cancel</button>
-                      </form>
-                    ) : (
-                      <span className="text-slate-400">—</span>
-                    )}
+                    <CancelRentalButton rentalId={r.id} csrf={csrf} />
                   </td>
                 </tr>
               ))}

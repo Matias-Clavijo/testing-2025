@@ -128,6 +128,13 @@ export function listRentals() {
   return rentals.slice().sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
+export function listActiveRentals() {
+  return rentals
+    .filter((r) => r.status === "active")
+    .slice()
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
 export function cancelRental(id: string) {
   const r = rentals.find((x) => x.id === id);
   if (!r) return { error: "Not found" as const };

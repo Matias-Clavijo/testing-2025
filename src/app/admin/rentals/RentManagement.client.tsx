@@ -22,9 +22,11 @@ function daysBetween(a: Date, b: Date) {
   return Math.round((b.getTime() - a.getTime()) / msPerDay) + 1;
 }
 
-export default function RentManagementClient() {
+type Props = { csrf: string };
+
+export default function RentManagementClient({ csrf }: Props) {
   // mock data; replace with fetch to your API as needed
-  const [rentals] = useState<Rental[]>([
+  const [rentals, setRentals] = useState<Rental[]>([
     { id: 'r1', item: 'Silk Evening Gown', renter: 'Ana Pérez', email: 'ana@example.com', phone: '555-0101', start: '2025-12-05', end: '2025-12-07', status: 'confirmed' },
     { id: 'r2', item: 'Black Tie Dress', renter: 'María López', email: 'maria@example.com', phone: '555-0202', start: '2025-12-10', end: '2025-12-12', status: 'confirmed' },
   ]);
@@ -42,7 +44,9 @@ export default function RentManagementClient() {
     return { first, last, days };
   }, [year, month]);
 
-  const rentalsInMonth = rentals.filter(r => {
+  const visibleRentals = rentals.filter(r => r.status !== 'cancelled');
+
+  const rentalsInMonth = visibleRentals.filter(r => {
     const s = parseDate(r.start);
     const e = parseDate(r.end);
     return !(e < monthInfo.first || s > monthInfo.last);
@@ -53,11 +57,11 @@ export default function RentManagementClient() {
       <div className="lg:col-span-1 rounded-2xl border p-4 bg-white dark:bg-slate-900">
         <h3 className="font-semibold">Rentals</h3>
         <div className="mt-4">
-          {rentals.length === 0 ? (
+          {visibleRentals.length === 0 ? (
             <div className="text-sm text-slate-500">No rentals found</div>
           ) : (
             <ul className="space-y-3">
-              {rentals.map(r => (
+              {visibleRentals.map(r => (
                 <li key={r.id} className="p-3 rounded-md border hover:bg-slate-50 dark:hover:bg-slate-800">
                   <div className="flex items-center justify-between">
                     <div>
@@ -120,7 +124,31 @@ export default function RentManagementClient() {
               <div><strong>Phone:</strong> {selected.phone ?? '—'}</div>
               <div><strong>Status:</strong> {selected.status}</div>
             </div>
-            <div className="mt-4 flex justify-end">
+            <div className="mt-4 flex justify-end gap-2">
+              {selected.status === 'confirmed' && (
+                <button
+                  onClick={async () => {
+                    const ok = window.confirm('Are you sure you want to cancel this rental?');
+                    if (!ok) return;
+                    try {
+                      const form = new FormData();
+                      form.set('csrf', csrf);
+                      await fetch(`/api/admin/rentals/${selected.id}/cancel`, {
+                        method: 'POST',
+                        body: form,
+                      });
+                    } catch (e) {
+                      // no-op fallback to local state update
+                    } finally {
+                      setRentals(prev => prev.map(r => r.id === selected.id ? { ...r, status: 'cancelled' } : r));
+                      setSelected(null);
+                    }
+                  }}
+                  className="rounded-xl border px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-slate-800"
+                >
+                  Cancel rental
+                </button>
+              )}
               <button onClick={() => setSelected(null)} className="rounded-xl bg-slate-100 px-4 py-2 text-sm">Close</button>
             </div>
           </div>
