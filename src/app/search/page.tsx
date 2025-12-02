@@ -12,16 +12,38 @@ type SearchParams = {
   end?: string;
 };
 
+<<<<<<< Updated upstream
 export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const params = await searchParams;
   const { q = "", category = "", size = "", color = "", style = "" } = params;
   const items = listItems({
+=======
+export default async function Page({ searchParams }: { searchParams: SearchParams }) {
+  const { q = "", category = "", size = "", color = "", style = "", start = "", end = "" } = await searchParams;
+
+  const itemsFromList = listItems({
+>>>>>>> Stashed changes
     q,
     category: category || undefined,
     size: size || undefined,
     color: color || undefined,
     style: style || undefined,
   });
+
+  function parseDateSafe(s?: string | null) {
+    if (!s) return null;
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const startDate = parseDateSafe(start);
+  const endDate = parseDateSafe(end);
+  const hasPastDate =
+    (startDate !== null && startDate < today) || (endDate !== null && endDate < today);
+
+  const items = hasPastDate ? [] : itemsFromList;
+  const showPastAlert = hasPastDate;
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
@@ -38,8 +60,21 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
         <input name="size" defaultValue={size} placeholder="Size" className="rounded-xl border px-3 py-2 text-sm" />
         <input name="color" defaultValue={color} placeholder="Color" className="rounded-xl border px-3 py-2 text-sm" />
         <input name="style" defaultValue={style} placeholder="Style (e.g., cocktail)" className="rounded-xl border px-3 py-2 text-sm" />
+        <input name="start" type="date" defaultValue={start} className="rounded-xl border px-3 py-2 text-sm" />
+        <input name="end" type="date" defaultValue={end} className="rounded-xl border px-3 py-2 text-sm" />
         <button className="rounded-xl bg-fuchsia-600 text-white px-4 py-2 text-sm">Search</button>
       </form>
+
+      {showPastAlert && (
+        <div role="alert" aria-live="assertive" className="swal2-popup swal-modal fixed z-50 inset-0 flex items-center justify-center">
+          <div className="bg-white dark:bg-slate-900 rounded-lg p-6 shadow-xl max-w-md text-center">
+            <h2 className="text-lg font-semibold">Invalid date range</h2>
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+              The selected date range is in the past and is not valid.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {items.map((it) => (
