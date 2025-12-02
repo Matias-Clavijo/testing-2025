@@ -9,14 +9,10 @@ test.describe('CP-001..CP-004, CP-034, CP-035 - Search and Filters', () => {
 
   test('CP-001: Filter Dresses by size M, color Black, style Formal', async ({ page }) => {
     const search = new SearchPage(page);
-    // Note: Using style "black-tie" as a formal equivalent to align with dataset.
     await search.setFilters({ category: 'dress', size: 'M', color: 'black', style: 'formal' });
     await search.submit();
-
-    // Filters persist
     await search.expectFilters({ category: 'dress', size: 'M', color: 'black', style: 'formal' });
 
-    // Results shown and each links to details
     const count = await search.resultCards.count();
     expect(count).toBeGreaterThan(0);
   });
@@ -25,32 +21,21 @@ test.describe('CP-001..CP-004, CP-034, CP-035 - Search and Filters', () => {
     const search = new SearchPage(page);
     await search.setFilters({ category: 'shoes', size: '38', color: 'red' });
     await search.submit();
-
-    // Filters persist
     await search.expectFilters({ category: 'shoes', size: '38', color: 'red' });
-
-    // Either matching results or informative empty state
     await search.expectResultsOrEmpty();
   });
 
   test('CP-003: Accessories color Beige across Bags and Jackets', async ({ page }) => {
     const search = new SearchPage(page);
-    // Bags
     await search.setFilters({ category: 'bag', color: 'beige' });
     await search.submit();
     await search.expectFilters({ color: 'beige' });
     await search.expectResultsOrEmpty();
 
-    // Jackets (color should persist if the app keeps query string)
     await search.setFilters({ category: 'jacket' });
     await search.submit();
     await search.expectFilters({ color: 'beige' });
     await search.expectResultsOrEmpty();
-  });
-
-  test.fixme('CP-004: Multiple filters OR within category and AND across categories', async () => {
-    // Backend currently supports single values per field; this case requires multi-select logic
-    // and OR semantics inside a category (e.g., sizes S OR M). Marked as fixme pending feature support.
   });
 
   test('CP-034: Invalid size value shows empty state and no crash', async ({ page }) => {
