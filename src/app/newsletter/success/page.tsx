@@ -12,7 +12,7 @@ export default function NewsletterSuccessPage() {
           <Link
             href="/"
             className="inline-flex items-center rounded-xl bg-fuchsia-600 px-6 py-3 text-sm font-semibold text-white hover:bg-fuchsia-500"
-          >
+          >a
             Volver al inicio
           </Link>
         </div>

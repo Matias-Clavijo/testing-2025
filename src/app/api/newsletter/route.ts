@@ -4,7 +4,6 @@ export async function POST(req: Request) {
   const formData = await req.formData();
   const email = (formData.get("email") || "").toString().trim();
 
-  // Very basic validation; replace with a real provider/integration if needed
   const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const url = new URL(req.url);
   url.pathname = "/newsletter/success";
@@ -14,7 +13,6 @@ export async function POST(req: Request) {
     return NextResponse.redirect(url);
   }
 
-  // In demo mode we don't persist; just pretend it's saved and redirect
   return NextResponse.redirect(url);
 }
 
