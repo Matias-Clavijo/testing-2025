@@ -12,17 +12,10 @@ type SearchParams = {
   end?: string;
 };
 
-<<<<<<< Updated upstream
-export default async function Page({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const params = await searchParams;
-  const { q = "", category = "", size = "", color = "", style = "" } = params;
-  const items = listItems({
-=======
 export default async function Page({ searchParams }: { searchParams: SearchParams }) {
   const { q = "", category = "", size = "", color = "", style = "", start = "", end = "" } = await searchParams;
 
   const itemsFromList = listItems({
->>>>>>> Stashed changes
     q,
     category: category || undefined,
     size: size || undefined,
