@@ -66,6 +66,20 @@ test.describe('CP-001..CP-004, CP-034, CP-035 - Search and Filters', () => {
     await search.submit();
     await expect(search.emptyText).toBeVisible();
   });
+
+  test('CP-037: Past date range shows error and no results', async ({ page }) => {
+    const search = new SearchPage(page);
+    await search.goto();
+    await search.setFilters({ category: 'dress' });
+    await page.fill('input[name="start"]', '1222-12-12');
+    await page.fill('input[name="end"]', '1333-12-12');
+    await search.submit();
+
+    const alert = page.locator('.swal2-popup, .swal-modal, [role="alert"], [role="alertdialog"]');
+    await expect(alert).toBeVisible({ timeout: 5000 });
+
+    await expect(search.resultCards).toHaveCount(0);
+  });
 });
 
 
