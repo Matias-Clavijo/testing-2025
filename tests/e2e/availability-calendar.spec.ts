@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../pom/HomePage';
-import { ItemPage } from '../pom/ItemPage';
 
 test.describe('CP-007, CP-008 - Availability Calendar', () => {
   test.beforeEach(async ({ page }) => {

@@ -1,8 +1,8 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import { HomePage } from '../pom/HomePage';
 import { SearchPage } from '../pom/SearchPage';
 
-async function assertNoHorizontalScroll(page) {
+async function assertNoHorizontalScroll(page: Page) {
   const hasOverflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
   expect(hasOverflow).toBeFalsy();
 }
